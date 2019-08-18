@@ -1,47 +1,149 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import './App.css';
+import List from './List'
+import * as dataStore from "./store_directory.json"
+/* import YourComponent from "./YourComponent"; */
+import {GoogleMap,withScriptjs,withGoogleMap,Marker,InfoWindow} from "react-google-maps"
 
-import YourComponent from "./YourComponent";
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <h1>Hi, Welcome to the Digital Generation Code Challenge!</h1>
-        <h3>Intro:</h3>
-
-        <p>At Generation, we have many users: students, teachers, employers, and the core Generation team.</p>
-        <p>Everything we do at Generation is centered around better serving the needs of these users. </p>
-        <p>In your role, you'll be using your ninja JavaScript skills to empower Generation to better serve these users.</p>
-        <p>That's why we've included this piece in the recruiting process. It gives you an opportunity to demonstrate your creative problem-solving, user-centric design, and coding style. </p>
-        <h3> Here's how it works:</h3>
-        <p></p>
-
-        <p>Below are some real-life <a target="_blank" rel="noopener noreferrer" href="https://en.wikipedia.org/wiki/User_story">user stories</a> that we face at Generation.</p>
-        <p>We'd love to see how you use JS and React to address these user stories.</p>
-        <p>Feel free to add libraries, create new components, or otherwise change the codebase. This app is yours!</p>
-        <p>If you're having trouble, don't be afraid to ask for help!</p>
-
-        <strong>Student user stories:</strong>
-        <ul>
-          <li>As a student, I want to see a map of <b>Mexico City</b></li>
-          <li>As a student, I want to see a map that has <b>all the stores</b> represented as <b>markers/pins</b> on the map. (<a target="_blank"  rel="noopener noreferrer" href="https://developers.google.com/maps/documentation/javascript/examples/marker-simple">What a google maps marker is?</a>)</li>
-          <li>As a student, I want to be able to click on a store marker and add it to a list of <b>'My Favorite Stores'</b></li>
-          <li>As a student, I want to be able to click on a store in the <b>'My Favorite Stores'</b> and remove if from the list</li>
-        </ul>
-
-        <strong>Helpful tips:</strong>
-        <ul>
-          <li>Feel free to use our Google Maps API key: <b>AIzaSyCVH8e45o3d-5qmykzdhGKd1-3xYua5D2A</b></li>
-          <li>The list of stores is located in the file <b>store_directory.json</b> </li>
-          <li><b>Focus on the user, not the technology.</b> A simple implementation that impresses the user is better than a super technical solution that impresses other developers.</li>
-          <li>That said, code that is easy to follow is always appreciated :)</li>
-        </ul>
-
-        <YourComponent />
-      </div>
-    );
+class Map extends React.Component{
+ 
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedStore: null,
+      favorites:[]
+    };
+    this.addList = this.addList.bind(this);
+    this.removeList = this.removeList.bind(this)
   }
+  addList(store) {
+console.log(store)
+    let existsFav = false;
+    
+    this.state.favorites.forEach(storeList => {
+    
+    if(storeList.Name === store.Name){
+    
+    existsFav = true; }})
+    
+    if(!existsFav){
+    
+    this.setState({favorites:  this.state.favorites.concat([store]) })
+    
+    alert("Tienda agregada a favoritos")
+    
+    }
+    
+    else{
+    
+    alert("Ya existe esta tienda en favoritos ⭐")
+    
+    }
+    
+    
+    
+    }
+    
+    removeList(store) {
+
+      const removed = this.state.favorites.filter(deleteStore => deleteStore.Name !== store.Name)
+       this.setState({ favorites: removed })
+      
+      }
+
+
+
+ render(){
+  return(
+   <React.Fragment>
+<h1>Lista de favoritos</h1>
+
+{this.state.favorites.map((ele,index)=>
+ <React.Fragment>
+ <div>
+   <button className="delete" key={ele.Name}   onClick={()=>{ this.removeList(ele) }}>X</button>
+ 
+  </div>
+  <div  className="list-store">  <p key={index}>{ele.Name}</p>              </div>
+  </React.Fragment>
+ 
+  )}
+
+
+
+<GoogleMap 
+      defaultZoom={12}
+      defaultCenter={{lat:19.432608,lng:-99.133209}}
+               >
+              {dataStore.map(store=>(
+           <Marker 
+                 key={store.Name}
+                 position={{
+                      lat:store.Coordinates.lat,
+                      lng:store.Coordinates.lng
+                          }}
+                 onClick={()=>{
+                  this.setState({ selectedStore: store})
+                  this.addList(store)      
+                         }}
+               />
+
+               ))}
+         { this.state.selectedStore && (
+  
+                   <InfoWindow
+                        position={{
+                             lat:this.state.selectedStore.Coordinates.lat,
+                             lng:this.state.selectedStore.Coordinates.lng
+                                  }}
+                                  onCloseClick={()=>{
+                                    this.setState({ selectedStore: null})
+                                          
+                                           }}
+ 
+                               >
+ 
+                         <div>
+                           <p>{this.state.selectedStore.Name}  </p>
+                           <p>{this.state.selectedStore.Address} </p>
+                         
+                         </div>
+ 
+                      </InfoWindow>
+                     
+                           )}
+
+
+  </GoogleMap>
+ 
+  </React.Fragment>
+  
+     );
+                            }
 }
 
-export default App;
+const WrappedMap=withScriptjs(withGoogleMap(Map));
+
+export default function App(){
+
+    return(
+      <React.Fragment>
+      <h1 className="title">Mapa de tiendas</h1>
+     <div className="border">
+       <div className="map">
+             <WrappedMap
+             googleMapURL={`https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=geometry,drawing,places&key=AIzaSyCVH8e45o3d-5qmykzdhGKd1-3xYua5D2A`}
+             loadingElement={<div style={{ height: `100%` }} />}
+             containerElement={<div style={{ height: `100%` }} />}
+             mapElement={<div style={{ height: `100%` }} />}
+             />
+         </div>
+        
+     </div> 
+   </React.Fragment>
+   )
+}
+
+
