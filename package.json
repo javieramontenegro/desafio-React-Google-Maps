@@ -1,14 +1,17 @@
 {
   "name": "generation-take-home-intern",
   "version": "0.1.0",
-  "private": true,
+  "homepage": "https://javieramontenegro.github.io/desafio-React-Google-Maps/",
   "dependencies": {
     "react": "^16.8.6",
     "react-dom": "16.8.6",
     "react-google-maps": "^9.4.5",
-    "react-scripts": "1.1.4"
+    "react-scripts": "1.1.4",
+    "gh-pages": "^1.0.0"
   },
   "scripts": {
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
