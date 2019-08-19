@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "homepage": "https://javieramontenegro.github.io/desafio-React-Google-Maps/",
   "dependencies": {
+    "gh-pages": "^1.0.0",
     "react": "^16.8.6",
     "react-dom": "16.8.6",
     "react-google-maps": "^9.4.5",
     "react-scripts": "1.1.4",
-    "gh-pages": "^1.0.0"
+    "yarn-install": "^1.0.0"
   },
   "scripts": {
     "predeploy": "npm run build",

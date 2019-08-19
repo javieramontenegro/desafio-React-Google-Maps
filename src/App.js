@@ -32,13 +32,13 @@ console.log(store)
     
     this.setState({favorites:  this.state.favorites.concat([store]) })
     
-    alert("Tienda agregada a favoritos")
+   
     
     }
     
     else{
     
-    alert("Ya existe esta tienda en favoritos ⭐")
+    alert("Esta tienda ya está en la lista")
     
     }
     
